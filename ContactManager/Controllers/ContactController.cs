@@ -6,9 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ContactManager.Controllers
 {
@@ -28,8 +27,11 @@ namespace ContactManager.Controllers
         [HttpGet]
         public IEnumerable<ContactDTO> Get()
         {
+            Guid OwnerId = GetOwnerId();
+
             var contacts = _contactsContext
                 .Contacts.Include(o => o.Owner)
+                .Where(c => c.OwnerId == OwnerId)
                 .Select(c => ContactDTO.Map(c));
             return contacts;
         }
@@ -38,8 +40,10 @@ namespace ContactManager.Controllers
         [HttpGet("{id}")]
         public ContactDTO Get(Guid id)
         {
+            Guid OwnerId = GetOwnerId();
+
             var contact = _contactsContext.Contacts
-                .Where(c => c.Id == id)
+                .Where(c => c.Id == id && c.OwnerId == OwnerId)
                 .Include(b => b.Owner)
                 .Select(b =>ContactDTO.Map(b))
                 .FirstOrDefault();
@@ -50,6 +54,9 @@ namespace ContactManager.Controllers
         [HttpPost]
         public void Post([FromBody] Contact value)
         {
+            Guid OwnerId = GetOwnerId();
+            value.OwnerId = OwnerId;
+
             _contactsContext.Contacts.Add(value);
             _contactsContext.SaveChanges();
         }
@@ -58,7 +65,9 @@ namespace ContactManager.Controllers
         [HttpPut("{id}")]
         public void Put(Guid id, [FromBody] Contact value)
         {
-            var contact = _contactsContext.Contacts.FirstOrDefault(s => s.Id == id);
+            Guid OwnerId = GetOwnerId();
+
+            var contact = _contactsContext.Contacts.FirstOrDefault(c => c.Id == id && c.OwnerId == OwnerId);
             if (contact != null)
             {
                 _contactsContext.Entry<Contact>(contact).CurrentValues.SetValues(value);
@@ -70,12 +79,27 @@ namespace ContactManager.Controllers
         [HttpDelete("{id}")]
         public void Delete(Guid id)
         {
-            var contact = _contactsContext.Contacts.FirstOrDefault(s => s.Id == id);
+            Guid OwnerId = GetOwnerId();
+
+            var contact = _contactsContext.Contacts.FirstOrDefault(c => c.Id == id && c.OwnerId == OwnerId);
             if (contact != null)
             {
                 _contactsContext.Contacts.Remove(contact);
                 _contactsContext.SaveChanges();
             }
+        }
+
+        private Guid GetOwnerId()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+
+            Guid OwnerId = Guid.Empty;
+            if (identity != null)
+            {
+                OwnerId = Guid.Parse(identity.FindFirst("UserId").Value);
+            }
+
+            return OwnerId;
         }
     }
 }
