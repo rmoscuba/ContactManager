@@ -31,6 +31,7 @@ namespace ContactManager.Models
         public string Phone { get; set; }
 
         [Required]
+        public Guid OwnerId { get; set; }
         public User Owner { get; set; }
 
     }
