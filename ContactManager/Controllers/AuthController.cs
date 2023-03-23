@@ -51,7 +51,7 @@ namespace ContactManager.Controllers
                         _configuration["Jwt:Issuer"],
                         _configuration["Jwt:Audience"],
                         claims,
-                        expires: DateTime.UtcNow.AddMinutes(10),
+                        expires: DateTime.UtcNow.AddMinutes(double.Parse(_configuration["Jwt:Expires"])),
                         signingCredentials: signIn);
 
                     var tokenInfo = new TokenInfo()
