@@ -35,7 +35,7 @@ namespace ContactManager.Models
                 dto.Email = entity.Email;
                 dto.DateOfBirth = entity.DateOfBirth;
                 dto.Phone = entity.Phone;
-                dto.Owner = entity.Owner.Id;
+                dto.Owner = entity.OwnerId;
             }
             catch (Exception e)
             {

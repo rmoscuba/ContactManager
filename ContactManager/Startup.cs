@@ -1,5 +1,7 @@
 using ContactManager.Contexts;
+using ContactManager.Interfaces;
 using ContactManager.Models;
+using ContactManager.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,6 +36,8 @@ namespace ContactManager
             services.AddDbContext<Contexts.ContactsContext>(options => options.UseSqlServer(
                 Configuration.GetConnectionString("ContactsConn"))
             );
+
+            services.AddScoped<IRepositoryManager, RepositoryManager>();
 
             services.AddControllers();
 

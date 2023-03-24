@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using ContactManager.Extensions;
+using ContactManager.Interfaces;
 
 namespace ContactManager.Controllers
 {
@@ -16,11 +17,11 @@ namespace ContactManager.Controllers
     [ApiController]
     public class ContactController : ControllerBase
     {
-        private ContactsContext _contactsContext;
+        private IRepositoryManager _repository;
 
-        public ContactController(ContactsContext ContactsContext)
+        public ContactController(IRepositoryManager repository)
         {
-            _contactsContext = ContactsContext;
+            _repository = repository;
         }
 
         // GET: api/<ContactController>
@@ -28,27 +29,21 @@ namespace ContactManager.Controllers
         public IEnumerable<ContactDTO> Get()
         {
             Guid OwnerId = HttpContext.User.GetOwnerId();
-
-            var contacts = _contactsContext
-                .Contacts.Include(o => o.Owner)
-                .Where(c => c.OwnerId == OwnerId)
-                .Select(c => ContactDTO.Map(c));
+            var contacts = _repository.Contact.GetAllUserContacts(OwnerId, trackChanges: false);
             return contacts;
         }
 
+
         // GET api/<ContactController>/5
-        [HttpGet("{id}")]
-        public ContactDTO Get(Guid id)
+        [HttpGet("{ContactId}")]
+        public ContactDTO Get(Guid ContactId)
         {
             Guid OwnerId = HttpContext.User.GetOwnerId();
-
-            var contact = _contactsContext.Contacts
-                .Where(c => c.Id == id && c.OwnerId == OwnerId)
-                .Include(b => b.Owner)
-                .Select(b =>ContactDTO.Map(b))
-                .FirstOrDefault();
+            var contact = _repository.Contact.GetUserContactDTOById(OwnerId, ContactId, trackChanges: false);
             return contact;
         }
+
+        
 
         // POST api/<ContactController>
         [HttpPost]
@@ -57,35 +52,41 @@ namespace ContactManager.Controllers
             Guid OwnerId = HttpContext.User.GetOwnerId();
             value.OwnerId = OwnerId;
 
-            _contactsContext.Contacts.Add(value);
-            _contactsContext.SaveChanges();
+            _repository.Contact.CreateContact(value);
+            _repository.Save();
         }
 
+
         // PUT api/<ContactController>/5
-        [HttpPut("{id}")]
-        public void Put(Guid id, [FromBody] Contact value)
+        [HttpPut("{ContactId}")]
+        public void Put(Guid ContactId, [FromBody] Contact value)
         {
             Guid OwnerId = HttpContext.User.GetOwnerId();
 
-            var contact = _contactsContext.Contacts.FirstOrDefault(c => c.Id == id && c.OwnerId == OwnerId);
+            // Ensure Ids are not tampered with
+            value.Id = ContactId;
+            value.OwnerId = OwnerId;
+
+            // Ensure contact for this User exists
+            var contact = _repository.Contact.GetUserContactDTOById(OwnerId, ContactId, trackChanges: false);
             if (contact != null)
             {
-                _contactsContext.Entry<Contact>(contact).CurrentValues.SetValues(value);
-                _contactsContext.SaveChanges();
+                _repository.Contact.UpdateContact(value);
+                _repository.Save();
             }
         }
 
         // DELETE api/<ContactController>/5
-        [HttpDelete("{id}")]
-        public void Delete(Guid id)
+        [HttpDelete("{ContactId}")]
+        public void Delete(Guid ContactId)
         {
             Guid OwnerId = HttpContext.User.GetOwnerId();
 
-            var contact = _contactsContext.Contacts.FirstOrDefault(c => c.Id == id && c.OwnerId == OwnerId);
+            var contact = _repository.Contact.GetUserContactById(OwnerId, ContactId, trackChanges: false);
             if (contact != null)
             {
-                _contactsContext.Contacts.Remove(contact);
-                _contactsContext.SaveChanges();
+                _repository.Contact.DeleteContact(contact);
+                _repository.Save();
             }
         }
     }
