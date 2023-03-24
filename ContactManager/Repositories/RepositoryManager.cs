@@ -1,5 +1,6 @@
 ﻿using ContactManager.Contexts;
 using ContactManager.Interfaces;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,13 @@ namespace ContactManager.Repositories
         private ContactsContext _contactsContext;
         private IContactRepository _contactRepository;
         private IUserRepository _userRepository;
+        private IJwtRepository _jwtRepository;
+        private IConfiguration _configuration;
 
-        public RepositoryManager(ContactsContext contactsContext)
+        public RepositoryManager(ContactsContext contactsContext, IConfiguration configuration)
         {
             _contactsContext = contactsContext;
+            _configuration = configuration;
         }
 
         public IContactRepository Contact
@@ -35,6 +39,16 @@ namespace ContactManager.Repositories
                 if (_userRepository == null)
                     _userRepository = new UserRepository(_contactsContext);
                 return _userRepository;
+            }
+        }
+
+        public IJwtRepository Jwt
+        {
+            get
+            {
+                if (_jwtRepository == null)
+                    _jwtRepository = new JwtRepository(_configuration);
+                return _jwtRepository;
             }
         }
 

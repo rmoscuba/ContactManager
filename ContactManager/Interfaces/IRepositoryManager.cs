@@ -4,6 +4,7 @@
     {
         IContactRepository Contact { get; }
         IUserRepository User { get; }
+        IJwtRepository Jwt { get; }
         void Save();
     }
 }
