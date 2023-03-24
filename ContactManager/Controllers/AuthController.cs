@@ -1,4 +1,5 @@
 ﻿using ContactManager.Contexts;
+using ContactManager.Interfaces;
 using ContactManager.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -15,13 +16,13 @@ namespace ContactManager.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private IRepositoryManager _repository;
         public IConfiguration _configuration;
-        private readonly ContactsContext _context;
 
-        public AuthController(IConfiguration config, ContactsContext context)
+        public AuthController(IConfiguration config, IRepositoryManager repository)
         {
+            _repository = repository;
             _configuration = config;
-            _context = context;
         }
 
         [HttpPost]
@@ -29,9 +30,9 @@ namespace ContactManager.Controllers
         {
             if (value != null && value.UserName != null && value.PassWord != null)
             {
-                var user = _context.Users.FirstOrDefault(
-                    u => u.UserName == value.UserName && u.PassWord == value.PassWord
-                );
+                var user = _repository.User.GetUserByUserNameAndPassWord(
+                        value.UserName, value.PassWord, trackChanges: false
+                    );
 
                 if (user != null)
                 {

@@ -32,7 +32,6 @@ namespace ContactManager.Repositories
         public ContactDTO GetUserContactDTOById(Guid OwnerId, Guid ContactId, bool trackChanges)
         {
             return FindByCondition(o => o.OwnerId == OwnerId && o.Id == ContactId, trackChanges)
-                    .OrderBy(c => c.FirstName)
                     .Select(c => ContactDTO.Map(c))
                     .FirstOrDefault();
         }

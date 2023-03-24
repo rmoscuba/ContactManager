@@ -11,10 +11,18 @@ namespace ContactManager.Repositories
         public UserRepository(ContactsContext _contactsContext) : base(_contactsContext)
         {
         }
-        public IEnumerable<User> GetAllUsers(bool trackChanges) =>
-            FindAll(trackChanges)
-            .OrderBy(c => c.FirstName)
-            .ToList();
+        public IEnumerable<User> GetAllUsers(bool trackChanges)
+        {
+            return FindAll(trackChanges)
+                    .OrderBy(c => c.FirstName)
+                    .ToList();
+        }
+        public User GetUserByUserNameAndPassWord(string UserName, string PassWord, bool trackChanges)
+        {
+
+            return FindByCondition(u => u.UserName == UserName && u.PassWord == PassWord, trackChanges)
+                    .FirstOrDefault();
+        }
 
         public void CreateUser(User user) => Create(user);
     }
