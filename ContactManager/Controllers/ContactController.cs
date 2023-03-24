@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-
+using ContactManager.Extensions;
 
 namespace ContactManager.Controllers
 {
@@ -27,7 +27,7 @@ namespace ContactManager.Controllers
         [HttpGet]
         public IEnumerable<ContactDTO> Get()
         {
-            Guid OwnerId = GetOwnerId();
+            Guid OwnerId = HttpContext.User.GetOwnerId();
 
             var contacts = _contactsContext
                 .Contacts.Include(o => o.Owner)
@@ -40,7 +40,7 @@ namespace ContactManager.Controllers
         [HttpGet("{id}")]
         public ContactDTO Get(Guid id)
         {
-            Guid OwnerId = GetOwnerId();
+            Guid OwnerId = HttpContext.User.GetOwnerId();
 
             var contact = _contactsContext.Contacts
                 .Where(c => c.Id == id && c.OwnerId == OwnerId)
@@ -54,7 +54,7 @@ namespace ContactManager.Controllers
         [HttpPost]
         public void Post([FromBody] Contact value)
         {
-            Guid OwnerId = GetOwnerId();
+            Guid OwnerId = HttpContext.User.GetOwnerId();
             value.OwnerId = OwnerId;
 
             _contactsContext.Contacts.Add(value);
@@ -65,7 +65,7 @@ namespace ContactManager.Controllers
         [HttpPut("{id}")]
         public void Put(Guid id, [FromBody] Contact value)
         {
-            Guid OwnerId = GetOwnerId();
+            Guid OwnerId = HttpContext.User.GetOwnerId();
 
             var contact = _contactsContext.Contacts.FirstOrDefault(c => c.Id == id && c.OwnerId == OwnerId);
             if (contact != null)
@@ -79,7 +79,7 @@ namespace ContactManager.Controllers
         [HttpDelete("{id}")]
         public void Delete(Guid id)
         {
-            Guid OwnerId = GetOwnerId();
+            Guid OwnerId = HttpContext.User.GetOwnerId();
 
             var contact = _contactsContext.Contacts.FirstOrDefault(c => c.Id == id && c.OwnerId == OwnerId);
             if (contact != null)
@@ -87,19 +87,6 @@ namespace ContactManager.Controllers
                 _contactsContext.Contacts.Remove(contact);
                 _contactsContext.SaveChanges();
             }
-        }
-
-        private Guid GetOwnerId()
-        {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-
-            Guid OwnerId = Guid.Empty;
-            if (identity != null)
-            {
-                OwnerId = Guid.Parse(identity.FindFirst("UserId").Value);
-            }
-
-            return OwnerId;
         }
     }
 }
