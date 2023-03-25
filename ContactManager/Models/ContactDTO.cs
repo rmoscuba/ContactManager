@@ -22,7 +22,7 @@ namespace ContactManager.Models
 
         public Guid Owner { get; set; }
 
-        internal static ContactDTO Map(Contact entity)
+        public static ContactDTO Map(Contact entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
 
