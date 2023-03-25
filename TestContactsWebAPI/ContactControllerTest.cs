@@ -3,6 +3,7 @@ using ContactManager.Interfaces;
 using ContactManager.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -35,13 +36,24 @@ namespace TestContactsWebAPI
         }
 
         [Fact]
-        public void Get_WhenCalledReturnTwoContactsList()
+        public void Get_WhenCalledReturnsTwoContactsList()
         {
             // Act
             var result = _contactController.Get();
             // Assert
             Assert.Equal(2, result.Count());
             Assert.IsType<List<ContactDTO>>(result);
+        }
+
+        [Fact]
+        public void GetByExistingContactIdReturnsContactDTO()
+        {
+            // Arrange
+            var ContactId = new Guid("3AC4CCE1-48D2-41D3-E7C1-08DB2B9CBBE8");
+            // Act
+            var result = _contactController.Get(ContactId);
+            // Assert
+            Assert.IsType<ContactDTO>(result);
         }
     }
 }
