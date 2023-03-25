@@ -55,5 +55,16 @@ namespace TestContactsWebAPI
             // Assert
             Assert.IsType<ContactDTO>(result);
         }
+
+        [Fact]
+        public void GetByContactIdOtherOwnerReturnsEmpty()
+        {
+            // Arrange
+            var ContactId = new Guid("EED907EF-AA49-4EE5-380D-08DB2BE0175D");
+            // Act
+            var result = _contactController.Get(ContactId);
+            // Assert
+            Assert.Null(result);
+        }
     }
 }
