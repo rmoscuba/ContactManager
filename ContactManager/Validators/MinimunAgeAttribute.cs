@@ -15,11 +15,6 @@ namespace ContactManager.Validators
             base.ErrorMessage = ErrorMessage;
         }
 
-        public override string FormatErrorMessage(string name)
-        {
-            return base.FormatErrorMessage(name);
-        }
-
         public override bool IsValid(object value)
         {
             if (value is null) {
