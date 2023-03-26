@@ -49,13 +49,29 @@ namespace ContactManager.Controllers
 
         // POST api/<ContactController>
         [HttpPost]
-        public void Post([FromBody] Contact value)
+        public IActionResult Post([FromBody] Contact value)
         {
             Guid OwnerId = HttpContext.User.GetOwnerId();
+
             value.OwnerId = OwnerId;
+            value.Id = Guid.NewGuid();
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             _repository.Contact.CreateContact(value);
             _repository.Save();
+
+            // 201 created successfully response, with a Location response header
+            // containing the newly created contact's URL.
+            return CreatedAtAction(nameof(Get), new { ContactId = value.Id }, ContactDTO.Map(value));
+        }
+
+        private void CreatedAtAction()
+        {
+            throw new NotImplementedException();
         }
 
 

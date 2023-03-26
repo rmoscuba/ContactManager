@@ -79,5 +79,20 @@ namespace TestContactsWebAPI
             // Assert
             Assert.Equal(StatusCodes.Status404NotFound, result.StatusCode);
         }
+
+        [Fact]
+        public void Add_ContactInvalidObjectPassed_ReturnsBadRequest()
+        {
+            // Arrange
+            var nameMissingItem = new Contact()
+            {
+                FirstName = "Missing"
+            };
+            _contactController.ModelState.AddModelError("Name", "Required");
+            // Act
+            var badResponse = _contactController.Post(nameMissingItem);
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(badResponse);
+        }
     }
 }
