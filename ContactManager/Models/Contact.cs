@@ -2,6 +2,7 @@
 
 namespace ContactManager.Models
 {
+    using ContactManager.Validators;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -23,6 +24,7 @@ namespace ContactManager.Models
         [Required]
         public string Email { get; set; }
 
+        [MinimunAge(18, "Contact must be 18 years or older")]
         [Required]
         public DateTime DateOfBirth { get; set; }
 
