@@ -26,21 +26,23 @@ namespace ContactManager.Controllers
 
         // GET: api/<ContactController>
         [HttpGet]
-        public IEnumerable<ContactDTO> Get()
+        public IActionResult Get()
         {
             Guid OwnerId = HttpContext.User.GetOwnerId();
             var contacts = _repository.Contact.GetAllUserContacts(OwnerId, trackChanges: false);
-            return contacts;
+            if (contacts is null) { return NotFound(); }
+            else { return Ok(contacts); }
         }
 
 
         // GET api/<ContactController>/5
         [HttpGet("{ContactId}")]
-        public ContactDTO Get(Guid ContactId)
+        public IActionResult Get(Guid ContactId)
         {
             Guid OwnerId = HttpContext.User.GetOwnerId();
             var contact = _repository.Contact.GetUserContactDTOById(OwnerId, ContactId, trackChanges: false);
-            return contact;
+            if (contact is null) { return NotFound();  }
+            else { return Ok(contact); }
         }
 
         

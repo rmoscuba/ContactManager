@@ -36,35 +36,48 @@ namespace TestContactsWebAPI
         }
 
         [Fact]
-        public void Get_WhenCalledReturnsTwoContactsList()
+        public void Get_WhenCalledReturnsStatus200OKTwoContactsList()
         {
             // Act
-            var result = _contactController.Get();
+            var result = _contactController.Get() as ObjectResult;
             // Assert
-            Assert.Equal(2, result.Count());
-            Assert.IsType<List<ContactDTO>>(result);
+            Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
+            Assert.IsType<List<ContactDTO>>(result.Value);
+            Assert.Equal(2,(result.Value as List<ContactDTO>).Count);
         }
 
         [Fact]
-        public void GetByExistingContactIdReturnsContactDTO()
+        public void GetByExistingContactIdReturnsStatus200OKContactDTO()
         {
             // Arrange
-            var ContactId = new Guid("3AC4CCE1-48D2-41D3-E7C1-08DB2B9CBBE8");
+            var ExistingContactId = new Guid("3AC4CCE1-48D2-41D3-E7C1-08DB2B9CBBE8");
             // Act
-            var result = _contactController.Get(ContactId);
+            var result = _contactController.Get(ExistingContactId) as ObjectResult;
             // Assert
-            Assert.IsType<ContactDTO>(result);
+            Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
+            Assert.IsType<ContactDTO>(result.Value);
         }
 
         [Fact]
-        public void GetByContactIdOtherOwnerReturnsEmpty()
+        public void GetByContactIdOtherOwnerReturnsStatus404NotFound()
         {
             // Arrange
-            var ContactId = new Guid("EED907EF-AA49-4EE5-380D-08DB2BE0175D");
+            var ContactIdFromOtherOwner = new Guid("EED907EF-AA49-4EE5-380D-08DB2BE0175D");
             // Act
-            var result = _contactController.Get(ContactId);
+            var result = _contactController.Get(ContactIdFromOtherOwner) as StatusCodeResult;
             // Assert
-            Assert.Null(result);
+            Assert.Equal(StatusCodes.Status404NotFound, result.StatusCode);
+        }
+
+        [Fact]
+        public void GetByContactIdNonExistentStatus404NotFound()
+        {
+            // Arrange
+            Guid nonExitentContactGuid = new Guid("38F115A1-4EAD-4480-9E12-A084EF1D5F72");
+            // Act
+            var result = _contactController.Get(nonExitentContactGuid) as StatusCodeResult;
+            // Assert
+            Assert.Equal(StatusCodes.Status404NotFound, result.StatusCode);
         }
     }
 }
