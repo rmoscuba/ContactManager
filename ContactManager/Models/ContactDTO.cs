@@ -22,6 +22,11 @@ namespace ContactManager.Models
 
         public Guid Owner { get; set; }
 
+        public int Age
+        {
+            get { return DateTime.Today.Year - this.DateOfBirth.Year; }
+        }
+
         public static ContactDTO Map(Contact entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
