@@ -36,6 +36,8 @@ namespace ContactManager
         {
             services.AddDbContext(Configuration);
 
+            services.AddHttpContextAccessor();
+
             services.AddScoped<IRepositoryManager, RepositoryManager>();
 
             services.AddControllers();

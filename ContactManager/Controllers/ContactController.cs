@@ -98,16 +98,26 @@ namespace ContactManager.Controllers
 
         // DELETE api/<ContactController>/5
         [HttpDelete("{ContactId}")]
-        public void Delete(Guid ContactId)
+        public IActionResult Delete(Guid ContactId)
         {
             Guid OwnerId = HttpContext.User.GetOwnerId();
+            string CountryCode = HttpContext.User.GetCountry();
+
+            if (CountryCode != "CU")
+            {
+                return new ObjectResult("DELETE is authorized only for Cuban Administrators") { StatusCode = 403 };
+            }
 
             var contact = _repository.Contact.GetUserContactById(OwnerId, ContactId, trackChanges: false);
             if (contact != null)
             {
                 _repository.Contact.DeleteContact(contact);
                 _repository.Save();
+
+                return Ok();
             }
+
+            return NotFound();
         }
     }
 }

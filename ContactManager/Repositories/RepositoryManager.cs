@@ -1,5 +1,6 @@
 ﻿using ContactManager.Contexts;
 using ContactManager.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,13 @@ namespace ContactManager.Repositories
         private IUserRepository _userRepository;
         private IJwtRepository _jwtRepository;
         private IConfiguration _configuration;
+        private IHttpContextAccessor _httpContextAccessor;
 
-        public RepositoryManager(ContactsContext contactsContext, IConfiguration configuration)
+        public RepositoryManager(ContactsContext contactsContext, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _contactsContext = contactsContext;
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IContactRepository Contact
@@ -47,7 +50,7 @@ namespace ContactManager.Repositories
             get
             {
                 if (_jwtRepository == null)
-                    _jwtRepository = new JwtRepository(_configuration);
+                    _jwtRepository = new JwtRepository(_configuration, _httpContextAccessor);
                 return _jwtRepository;
             }
         }

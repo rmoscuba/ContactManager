@@ -19,5 +19,19 @@ namespace ContactManager.Extensions
 
             return OwnerId;
         }
+
+        public static string GetCountry(this IPrincipal principal)
+        {
+
+            var identity = principal.Identity as ClaimsIdentity;
+
+            string countryCode = "";
+            if (identity != null)
+            {
+                countryCode = identity.FindFirst("Country").Value;
+            }
+
+            return countryCode;
+        }
     }
 }
