@@ -3,10 +3,12 @@
 namespace ContactManager.Models
 {
     using ContactManager.Validators;
+    using Microsoft.EntityFrameworkCore;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
     [Table("Contact")]
+    [Index(nameof(OwnerId), nameof(Email), IsUnique = true)]
     public class Contact
     {
         [Key]

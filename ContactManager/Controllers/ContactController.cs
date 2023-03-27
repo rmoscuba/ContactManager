@@ -61,17 +61,19 @@ namespace ContactManager.Controllers
                 return BadRequest(ModelState);
             }
 
-            _repository.Contact.CreateContact(value);
-            _repository.Save();
+            try
+            {
+                _repository.Contact.CreateContact(value);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return BadRequest(e.InnerException.Message);
+            }
 
             // 201 created successfully response, with a Location response header
             // containing the newly created contact's URL.
             return CreatedAtAction(nameof(Get), new { ContactId = value.Id }, ContactDTO.Map(value));
-        }
-
-        private void CreatedAtAction()
-        {
-            throw new NotImplementedException();
         }
 
 
