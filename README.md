@@ -1,9 +1,58 @@
 # ContactManager
 ASP.NET Core Web API that manages contacts
 
+## Online at:
+### API
+http://rmoscuba-001-site1.ftempurl.com/api/contact
+
+Sample Postman Curl:
+* GET
+
+curl --location --request GET 'http://rmoscuba-001-site1.ftempurl.com/api/contact' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJDb250YWN0c1Rva2VuIiwianRpIjoiMGQ4NWM2MDEtNjhkYy00YmY5LTlhNDgtOTZjMjk1NjE1YmFkIiwiaWF0IjoiMy8yNy8yMDIzIDc6MTI6MDUgQU0iLCJVc2VySWQiOiI3NDIxYmI3Zi0wYWEwLTRhNDEtNmMwNC0wOGRiMmU4YmJhMzYiLCJDb3VudHJ5IjoiQ1UiLCJGaXJzdE5hbWUiOiJKb3PDqSIsIlVzZXJOYW1lIjoicGVwZSIsImV4cCI6MTY3OTk4NzUyNSwiaXNzIjoiQ29udGFjdHNNYW5hZ2VyU2VydmljZSIsImF1ZCI6IkNvbnRhY3RzTWFuYWdlckNsaWVudHMifQ.ETcgT62TBAvvENIhj9y0hmBkgDiVnqJjf1y0ioQOvyU' \
+--header 'Content-Type: application/json'
+
+* POST
+
+curl --location --request POST 'http://rmoscuba-001-site1.ftempurl.com/api/contact' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJDb250YWN0c1Rva2VuIiwianRpIjoiMGQ4NWM2MDEtNjhkYy00YmY5LTlhNDgtOTZjMjk1NjE1YmFkIiwiaWF0IjoiMy8yNy8yMDIzIDc6MTI6MDUgQU0iLCJVc2VySWQiOiI3NDIxYmI3Zi0wYWEwLTRhNDEtNmMwNC0wOGRiMmU4YmJhMzYiLCJDb3VudHJ5IjoiQ1UiLCJGaXJzdE5hbWUiOiJKb3PDqSIsIlVzZXJOYW1lIjoicGVwZSIsImV4cCI6MTY3OTk4NzUyNSwiaXNzIjoiQ29udGFjdHNNYW5hZ2VyU2VydmljZSIsImF1ZCI6IkNvbnRhY3RzTWFuYWdlckNsaWVudHMifQ.ETcgT62TBAvvENIhj9y0hmBkgDiVnqJjf1y0ioQOvyU' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "firstName": "Rodolfo4",
+    "lastName": "Ortega4",
+    "email": "rortega4@avangenio.com",
+    "dateOfBirth": "2000-12-06T17:16:40",
+    "phone": "455555552"
+}'
+
+### Authorization
+http://rmoscuba-001-site1.ftempurl.com/api/auth
+
+Auth Postman Curl
+
+* POST
+
+curl --location --request POST 'http://rmoscuba-001-site1.ftempurl.com/api/auth' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "UserName": "pepe",
+    "PassWord": "1234"
+}'
+
+
+###
+
+# About
+
 ASP.NET Core Web API project.
 Entity Framework as ORM following the Code First approach.
 SQL Server DataBase called contacts.
+
+# Design
+
+Used the repository design pattern to decouple the data access layer from the business access layer of the application. Using interfaces for dependency injection, allowing to fake the dependency to test the logic with unit tests.
+
+# Specs
 
 Exposes a RESTful endpoint providing standard CRUD functionality for Contacts.
 
